@@ -7,6 +7,8 @@
 
 > 子进程 for Humans 2.0. by `kennethreitz`
 
+[github source](https://github.com/kennethreitz/delegator.py)
+
 ---
 
 explain
