@@ -22,8 +22,23 @@ _defualt_popen['env']['PYTHONUNBUFFERED'] = '1'
 
 try:
     child = PopenSpawn('node')
-    child.logfile = sys.stdout
+    print(child.read())
 except:
     print("Exception was thrown")
     print("debug information:")
     print(str(child))
+
+# import pexpect
+# child = pexpect.spawn('ftp ftp.openbsd.org')
+# child.expect('Name .*: ')
+# child.sendline('anonymous')
+# child.expect('Password:')
+# child.sendline('noah@example.com')
+# child.expect('ftp> ')
+# child.sendline('lcd /tmp')
+# child.expect('ftp> ')
+# child.sendline('cd pub/OpenBSD')
+# child.expect('ftp> ')
+# child.sendline('get README')
+# child.expect('ftp> ')
+# child.sendline('bye')
