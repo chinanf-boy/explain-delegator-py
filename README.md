@@ -117,7 +117,7 @@ class Command(object):
     def run(self, block=True, binary=False, cwd=None):
         """Runs the given command, with or without
          pexpect functionality enabled."""
-        self.blocking = block
+        self.blocking = block # 需要交互吗
 
         # Use subprocess.
         if self.blocking:
@@ -137,24 +137,15 @@ class Command(object):
             pexpect_kwargs['env']['PYTHONUNBUFFERED'] = '1'
             s = PopenSpawn(self._popen_args, **pexpect_kwargs)
         self.subprocess = s
-        self.was_run = True
+        self.was_run = True # 是否运行的状态
 ```
 
 > --
 
-- [`_default_popen_kwargs` 默认 popen 选项](#default-popen-kwargs)
+- [`_default_popen_kwargs` subprocess.Popen 默认 popen 选项](#default-popen-kwargs)
 
-``` py
-{
-    'env': os.environ.copy(),
-    'stdin': subprocess.PIPE,
-    'stdout': subprocess.PIPE,
-    'stderr': subprocess.PIPE,
-    'shell': True,
-    'universal_newlines': True,
-    'bufsize': 0
-}
-```
+
+---
 
 - [.copy() 浅复制](#copy)
 
@@ -165,13 +156,17 @@ print "New Dictinary : %s" %  str(dict2)
 # New Dictinary : {'Age': 7, 'Name': 'Zara'}
 ```
 
+-  [_default_pexpect_kwargs PopenSpawn 默认 选项](#default_pexpect_kwargs)
+
 - [`subprocess.Popen`](#subprocess-popen)
 
 > subprocess - 可以在当前程序中执行其他程序或命令；
 
 > subprocess.Popen - 子进程
 
-- [`PopenSpawn`]()
+- [`from pexpect.popen_spawn import PopenSpawn`](#popenspawn)
+
+> `Pexpect` 是一个用来启动子程序并对其进行自动控制的纯 Python 模块
 
 ---
 
@@ -197,9 +192,84 @@ print "New Dictinary : %s" %  str(dict2)
 
     - 重新实现一个属性的 `setter`和 `getter`方法
 
+- `env`
+
+> 字典，键和值都是为子进程定义环境变量的字符串；
+
+- `stdin, stdout, stderr`
+
+> 如果调用Popen()的时候对应的参数是subprocess.PIPE，则这里对应的属性是一个包裹了这个管道的 file 对象，
+
+- `shell：布尔型变量，`
+
+> 明确要求使用shell运行程序，与参数 executable 一同指定子进程运行在什么 Shell 中——如果executable=None 而 shell=True，则使用 /bin/sh 来执行 args 指定的程序；
+
+- `universal_newline：布尔型变量，`
+
+> 为 True 时，stdout 和 stderr 以通用换行（universal newline）模式打开，
+
+- `bufsize`
+
+> 控制 stdin, stdout, stderr 等参数指定的文件的缓冲，和打开文件的 open()函数中的参数 bufsize 含义相同。
+
 ---
 
+### default_pexpect_kwargs
+
+``` py
+    @property
+    def _default_pexpect_kwargs(self):
+        encoding = 'utf-8'
+        if sys.platform == 'win32':
+            default_encoding = locale.getdefaultlocale()[1]
+            if default_encoding is not None:
+                encoding = default_encoding
+        return {
+            'env': os.environ.copy(),
+            'encoding': encoding,
+            'timeout': self.timeout
+        }
+```
+
+- locale.getdefaultlocale()[1]
+
+> 默认编码
+
+- `env` 
+
+> 字典，键和值都是为子进程定义环境变量的字符串；
+
+- `encoding`
+
+> 编码
+
+- `timeout`
+
+> 超时
+
 ### subprocess-Popen
+
+[./trySubprocess.py](./trySubprocess.py)
+
+`subprocees.Popen` 创建并返回一个子进程，并在这个进程中执行指定的程序。
+
+``` bash
+python trySubprocess.py
+```
+
+### popenspawn
+
+> 类 `subprocess.Popen`，提供像`pexpect.spawn`的接口
+
+[trypopenspawn](./tryPopenSpawn.py)
+
+[API--](https://pexpect.readthedocs.io/en/stable/api/popen_spawn.html)
+
+``` py
+python tryPopenSpawn.py
+```
+
+因为想不出，有什么可以交互的
 ---
 
 ### 其他
